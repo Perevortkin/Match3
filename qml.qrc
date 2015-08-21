@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file>icons/sunny62.png</file>
+        <file>icons/snowflake3.png</file>
+        <file>icons/rain14.png</file>
+        <file>icons/lightning31.png</file>
+        <file>icons/cloudy65.png</file>
+    </qresource>
+</RCC>
