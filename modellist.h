@@ -3,14 +3,16 @@
 
 #include <QObject>
 #include <QAbstractListModel>
-#include "item.h"
 
+#include "item.h"
+#include "gameconfig.h"
 
 class ModelList: public QAbstractListModel
 {
     Q_OBJECT
 public:
     ModelList(QObject* pobj = 0);
+    ModelList(GameConfig& config, QObject *pobj = 0);
     QVariant data(const QModelIndex& index, int nRole) const;
     bool setData(const QModelIndex& index, const QVariant& value, int nRole);
     int rowCount(const QModelIndex& parent = QModelIndex()) const;
@@ -21,15 +23,21 @@ public:
     enum Roles { Name = Qt::UserRole + 1, Path, Flag};
 
     void addItem(const Item &c);
-    bool searchForMatch();
+    Q_INVOKABLE bool searchForMatch();
     Q_INVOKABLE void swapTwoElements(int from, int to);
+    void remove();
+    Q_INVOKABLE int getName(int index);
 
     void removeItems();
 
 public slots:
     void swapTwoElementsWithoutSearching(int from, int to);
 private:
+    GameConfig m_config;
     QList<Item> m_list;
+    QVector <QVector<int> > removeVerticalMatch;
+    QVector <QVector<int> > removeHorizontalMatch;
+
 };
 
 #endif // MODELLIST_H

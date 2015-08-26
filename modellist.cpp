@@ -6,11 +6,16 @@ ModelList::ModelList(QObject *pobj)
 
 }
 
+ModelList::ModelList(GameConfig & config, QObject *pobj)
+    :QAbstractListModel(pobj) {
+    m_config = config;
+}
+
 QVariant ModelList::data(const QModelIndex &index, int nRole) const {
     if (index.row() < 0 || index.row() > m_list.count()) {
         return QVariant();
     }
-    const Item &item = m_list[index.row()];
+    Item item = m_list[index.row()];
     if (nRole == Name) {
         return item.getName();
     }
@@ -62,10 +67,11 @@ void ModelList::addItem(const Item &c) {
 }
 
 bool ModelList::searchForMatch() {
-    int rowCount = 8;
-    int colCount = 8;
+    int rowCount = m_config.rows();
+    int colCount = m_config.columns();
     int matches = 1;
     bool isMatch = false;
+
     //Horizontal search
     for (int i = 0; i < rowCount * colCount; i += rowCount) {
         matches = 1;
@@ -80,26 +86,32 @@ bool ModelList::searchForMatch() {
                 int k = j;
                 isMatch = true;
                 qDebug()<< "hor matches :"<< matches;
+                QVector<int> match;
                 while (matches != 0) {
+                    match.push_front(k);
                     m_list[k].setFlag(true);
                     qDebug() <<" index :" << k;
                     k--;
                     matches--;
                 }
                 matches = 1;
+                removeHorizontalMatch.push_back(match);
             }
 
             if (j + 1 == i + rowCount - 1 && matches >= 3) {
                 int k = j + 1;
                 isMatch = true;
+                QVector<int> match;
                 qDebug()<< "hor matches :"<< matches;
                 while (matches != 0) {
+                    match.push_front(k);
                     m_list[k].setFlag(true);
                     qDebug() <<" index :" << k;
                     k--;
                     matches--;
                 }
                 matches = 1;
+                removeHorizontalMatch.push_back(match);
             }
         }
     }
@@ -118,24 +130,30 @@ bool ModelList::searchForMatch() {
                 isMatch = true;
                 int k = j;
                 qDebug()<< "ver matches :"<< matches;
+                QVector<int> match;
                 while (matches != 0) {
-                    m_list[k].setFlag(true);
+                        match.push_front(k);
+                        m_list[k].setFlag(true);
                     qDebug() <<" index :" << k;
                     k -= colCount;
                     matches--;
                 }
+                removeVerticalMatch.push_back(match);
                 matches = 1;
             }
             if (j + colCount == (colCount - 1) * rowCount + i && matches >= 3) {
                 isMatch = true;
                 int k = j += colCount;
                 qDebug()<< "ver matches :"<< matches;
+                QVector<int> match;
                 while (matches != 0) {
+                    match.push_front(k);
                     m_list[k].setFlag(true);
                     qDebug() <<" index :" << k;
                     k -= colCount;
                     matches--;
                 }
+                removeVerticalMatch.push_back(match);
                 matches = 1;
             }
 
@@ -148,7 +166,7 @@ bool ModelList::searchForMatch() {
         connect(timer, &QTimer::timeout,
                 [=]()
         {
-            removeItems();
+            remove();
         });
         timer->setSingleShot(true);
         timer->start(500);
@@ -158,71 +176,117 @@ bool ModelList::searchForMatch() {
 }
 
 void ModelList::swapTwoElementsWithoutSearching(int from, int to) {
-    if (from + 8 == to) {
+
+    int columns = m_config.columns();
+
+    if (from + columns == to) {
         beginMoveRows(QModelIndex(), from, from, QModelIndex(), to + 1);
         qSwap(m_list[from], m_list[to]);
         endMoveRows();
-        beginMoveRows(QModelIndex(), to -1, to -1, QModelIndex(), to - 8);
+        beginMoveRows(QModelIndex(), to -1, to -1, QModelIndex(), to - columns);
         endMoveRows();
     }
-    if (from - 8 == to) {
+    if (from - columns == to) {
         beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
         qSwap(m_list[from], m_list[to]);
         endMoveRows();
-        beginMoveRows(QModelIndex(), to + 1, to + 1, QModelIndex(), to + 9);
+        beginMoveRows(QModelIndex(), to + 1, to + 1, QModelIndex(), to + columns + 1);
         endMoveRows();
     }
     if ( from - 1 == to) {
         beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
         qSwap(m_list[from], m_list[to]);
-        beginMoveRows(QModelIndex(), to, to, QModelIndex(), from + 1);
         endMoveRows();
-        endMoveRows();
+
     }
     if ( from + 1 == to) {
         beginMoveRows(QModelIndex(), from, from, QModelIndex(), to + 1);
         qSwap(m_list[from], m_list[to]);
-        beginMoveRows(QModelIndex(), to, to, QModelIndex(), from);
-        endMoveRows();
         endMoveRows();
     }
 }
 void ModelList::swapTwoElements(int from, int to) {
 
-    if (from + 8 == to) {
-        beginMoveRows(QModelIndex(), from, from, QModelIndex(), to + 1);
-        qSwap(m_list[from], m_list[to]);
-        endMoveRows();
-        beginMoveRows(QModelIndex(), to -1, to -1, QModelIndex(), to - 8);
-        endMoveRows();
+    int columns = m_config.columns();
+
+    if ( from + columns == to || from - columns == to || from + 1 == to || from - 1 == to) {
+        swapTwoElementsWithoutSearching(from, to);
+        if (!searchForMatch()) {
+            QTimer *timer = new QTimer(this);
+            connect(timer, &QTimer::timeout,
+                    [=]() {
+                swapTwoElementsWithoutSearching(to, from); });
+            timer->setSingleShot(true);
+            timer->start(500);
+        }
     }
-    if (from - 8 == to) {
-        beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
-        qSwap(m_list[from], m_list[to]);
-        endMoveRows();
-        beginMoveRows(QModelIndex(), to + 1, to + 1, QModelIndex(), to + 9);
-        endMoveRows();
+}
+
+void ModelList::remove() {
+    int rows = m_config.rows();
+    int columns = m_config.columns();
+    int index;
+    int k = 0;
+
+    //if item is in horizontal and vertical match
+
+    //remove Horizontal Match
+    for (int i = 0; i < removeHorizontalMatch.size(); i++) {
+        for (int j = 0; j < removeHorizontalMatch[i].size(); j++) {
+            index = removeHorizontalMatch[i][j];
+            while (  k < columns ) {
+                swapTwoElementsWithoutSearching(index,index + columns);
+                k++;
+                index += columns;
+            }
+
+            beginInsertRows(QModelIndex(), index, index);
+            m_list.insert(index, Item());
+            endInsertRows();
+            beginRemoveRows(QModelIndex(), index + 1, index + 1 );
+            m_list.removeAt(index + 1);
+            endRemoveRows();
+            k = 0;
+        }
     }
-    if ( from - 1 == to) {
-        beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
-        qSwap(m_list[from], m_list[to]);
-        endMoveRows();
+    k = 0;
+
+    //remove Vertical Match
+    for (int i = 0; i < removeVerticalMatch.size(); i++) {
+        for (int j = 0; j < removeVerticalMatch[i].size(); j++) {
+            index = removeVerticalMatch[i][0];
+            //if element doesn`t removed yet
+            if (m_list[index].getFlag()) {
+            while ( k < rows) {
+                swapTwoElementsWithoutSearching(index, index + columns);
+                k++;
+                index += columns;
+            }
+            beginInsertRows(QModelIndex(), index, index);
+            m_list.insert(index, Item());
+            endInsertRows();
+            beginRemoveRows(QModelIndex(), index + 1, index + 1 );
+            m_list.removeAt(index + 1);
+            endRemoveRows();
+            k = 0;
+        }
     }
-    if ( from +1 == to) {
-        beginMoveRows(QModelIndex(), from, from, QModelIndex(), to + 1);
-        qSwap(m_list[from], m_list[to]);
-        endMoveRows();
     }
-    if (!searchForMatch()) {
-        QTimer *timer = new QTimer(this);
-        connect(timer, &QTimer::timeout,
-                [=]()
-        {
-            swapTwoElementsWithoutSearching(to, from);
-        });
-        timer->setSingleShot(true);
-        timer->start(500);
-    }
+
+    removeVerticalMatch.clear();
+    removeHorizontalMatch.clear();
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout,
+            [=]() {
+        searchForMatch(); });
+    timer->setSingleShot(true);
+    timer->start(700);
+}
+
+int ModelList::getName(int index)
+{
+    return m_list[index].getName();
 }
 
 void ModelList::removeItems()
@@ -230,13 +294,24 @@ void ModelList::removeItems()
 
     for (int i = 0; i < 64; i++) {
         if (m_list[i].getFlag()) {
-            beginRemoveRows(QModelIndex(),i,i);
-            while (i + 8 < 64 - 8) {
-                swapTwoElementsWithoutSearching(i + 8, i);
-                i += 8;
-            }
-            endRemoveRows();
+            beginRemoveColumns(QModelIndex(),i,i);
+            //  beginRemoveRows(QModelIndex(),i,64);
+            int j = i;
+            m_list.removeAt(i);
+
+            qDebug() << "remove :" << i;
+            //            while (j + 8 < 56  ) {
+            swapTwoElementsWithoutSearching(j + 8, j);
+            //                j += 8;
+            //            }
+            beginInsertRows(QModelIndex(), rowCount(), rowCount());
+            m_list.insert(j,Item());
+            endInsertRows();
+            //   endRemoveRows();
+            endRemoveColumns();
+            break;
         }
+
     }
 }
 

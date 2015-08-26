@@ -12,10 +12,12 @@ public:
     void setName(int name);
 
     QString getIcon() const;
-    void setIcon(const QString &Icon);
+    //void setIcon(const QString &Icon);
 
     bool getFlag() const;
     void setFlag(bool flag);
+
+    QString getIconSource();
 
 private:
 

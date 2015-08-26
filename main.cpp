@@ -2,16 +2,22 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
+
+#include <QDebug>
 #include "modellist.h"
+#include "gameconfig.h"
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    ModelList model;
-    for (int i = 0; i < 128; i++)
+    GameConfig config;
+    ModelList model(config);
+    for (int i = 0; i <2 * config.rows() * config.columns(); i++)
     model.addItem(Item());
+    model.searchForMatch();
 
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("myConfig", &config);
     engine.rootContext()->setContextProperty("myModel", &model);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 

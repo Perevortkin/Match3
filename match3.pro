@@ -4,7 +4,8 @@ QT += qml quick widgets
 
 SOURCES += main.cpp \
     modellist.cpp \
-    item.cpp
+    item.cpp \
+    gameconfig.cpp
 
 RESOURCES += qml.qrc
 
@@ -16,6 +17,7 @@ include(deployment.pri)
 
 HEADERS += \
     modellist.h \
-    item.h
+    item.h \
+    gameconfig.h
 
 CONFIG += c++11

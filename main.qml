@@ -40,8 +40,8 @@ ApplicationWindow {
 
             id: view
             anchors.fill: parent
-            cellHeight:  mainRect.height / 8
-            cellWidth:   mainRect.width / 8
+            cellHeight:  mainRect.height / myConfig.rows
+            cellWidth:   mainRect.width / myConfig.columns
             interactive: false
 
             highlight: highlight
@@ -53,14 +53,43 @@ ApplicationWindow {
             verticalLayoutDirection: GridView.BottomToTop
 
             move: Transition {
-                ParallelAnimation {
-                    NumberAnimation { easing.type: Easing.OutCubic; properties: "x,y"; duration: 500 }
+
+                NumberAnimation {
+                    id: anim
+                    easing.type: Easing.OutCubic; properties: "y"; duration: 500
+                    alwaysRunToEnd: true
+                }
+                onRunningChanged:
+                {
+                    if (!anim.running) {
+                        // stop
+                        //    myModel.searchForMatch();
+                        //     console.log("fgdgf");
+                    } else {
+                        // start
+                        //  console.log("aaaaa");
+                    }
+
                 }
             }
-            add: Transition {
-                SequentialAnimation {
-                    NumberAnimation { target: delegateRect; property: "x";  duration: 100 }
-                    NumberAnimation { target: delegateRect; property: "y";  duration: 100 }
+            moveDisplaced: Transition {
+
+                NumberAnimation {
+                    id: anim1
+                    easing.type: Easing.OutCubic; properties: "y"; duration: 500
+                    alwaysRunToEnd: true
+                }
+                onRunningChanged:
+                {
+                    if (!anim1.running) {
+                        // stop
+                       //     myModel.searchForMatch();
+                        //     console.log("fgdgf");
+                    } else {
+                        // start
+                        //  console.log("aaaaa");
+                    }
+
                 }
             }
 
@@ -74,16 +103,22 @@ ApplicationWindow {
                         id: iconLoader
                         anchors.centerIn: parent
                         source: model.path
+                        cache: false
                         Text {
                             anchors.centerIn: parent
-                            text: index
+                            text: index + " " + model.name
                             color:"white"
+                        }
+                        onSourceChanged: {
+                          //  console.log("Source: " + source + " index: " + index);
                         }
                     }
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
+                            //console.log("@@@CLICK: " + iconLoader.source + " index: " + index + " Name: " + model.name);
                             view.currentIndex = index;
+                           // console.log("current name: " + myModel.getName(index));
                             if (root.clicked && (index != root.index)) {
                                 myModel.swapTwoElements(root.index, index);
                                 root.clicked = false;
