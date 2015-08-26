@@ -9,15 +9,11 @@ public:
     Item();
     void getRandomIcon();
     int getName() const;
-    void setName(int name);
-
     QString getIcon() const;
-    //void setIcon(const QString &Icon);
+     bool getFlag() const;
 
-    bool getFlag() const;
+    void setName(int name);
     void setFlag(bool flag);
-
-    QString getIconSource();
 
 private:
 

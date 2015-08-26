@@ -10,6 +10,8 @@
 class ModelList: public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(GameConfig* config READ config NOTIFY configChanged)
+
 public:
     ModelList(QObject* pobj = 0);
     ModelList(GameConfig& config, QObject *pobj = 0);
@@ -30,9 +32,16 @@ public:
 
     void removeItems();
 
-public slots:
+    GameConfig* config();
     void swapTwoElementsWithoutSearching(int from, int to);
+
+    void setFirstSearchExecuted(bool firstSearchExecuted);
+
+signals:
+    void configChanged(GameConfig config);
+
 private:
+    bool m_firstSearchExecuted;
     GameConfig m_config;
     QList<Item> m_list;
     QVector <QVector<int> > removeVerticalMatch;

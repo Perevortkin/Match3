@@ -9,9 +9,9 @@ ApplicationWindow {
     property var clicked: false
     property var index: 0
 
-    title: qsTr("Hello World")
-    width: 900
-    height: 900
+    title: qsTr("Match 3")
+    width: 800
+    height: 820
     visible: true
 
     Rectangle {
@@ -25,12 +25,19 @@ ApplicationWindow {
 
 
         Component {
+
             id: highlight
+
             Rectangle {
-                width: view.cellWidth; height: view.cellHeight
-                color: "lightsteelblue"; radius: 5
+
+                width: view.cellWidth
+                height: view.cellHeight
+
                 x: view.currentItem.x
                 y: view.currentItem.y
+                color: "lightsteelblue"
+                radius: 5
+
                 Behavior on x { SpringAnimation { spring: 3; damping: 0.2 } }
                 Behavior on y { SpringAnimation { spring: 3; damping: 0.2 } }
             }
@@ -40,8 +47,8 @@ ApplicationWindow {
 
             id: view
             anchors.fill: parent
-            cellHeight:  mainRect.height / myConfig.rows
-            cellWidth:   mainRect.width / myConfig.columns
+            cellHeight:  mainRect.height  / myModel.config.rows
+            cellWidth:   mainRect.width / myModel.config.columns
             interactive: false
 
             highlight: highlight
@@ -83,7 +90,7 @@ ApplicationWindow {
                 {
                     if (!anim1.running) {
                         // stop
-                       //     myModel.searchForMatch();
+                        //     myModel.searchForMatch();
                         //     console.log("fgdgf");
                     } else {
                         // start
@@ -104,13 +111,15 @@ ApplicationWindow {
                         anchors.centerIn: parent
                         source: model.path
                         cache: false
+                        width: item.width * 0.7
+                        height: item.height * 0.7
                         Text {
                             anchors.centerIn: parent
                             text: index + " " + model.name
                             color:"white"
                         }
                         onSourceChanged: {
-                          //  console.log("Source: " + source + " index: " + index);
+                            //  console.log("Source: " + source + " index: " + index);
                         }
                     }
                     MouseArea {
@@ -118,7 +127,8 @@ ApplicationWindow {
                         onClicked: {
                             //console.log("@@@CLICK: " + iconLoader.source + " index: " + index + " Name: " + model.name);
                             view.currentIndex = index;
-                           // console.log("current name: " + myModel.getName(index));
+                            // console.log("current name: " + myModel.getName(index));
+
                             if (root.clicked && (index != root.index)) {
                                 myModel.swapTwoElements(root.index, index);
                                 root.clicked = false;
@@ -147,6 +157,21 @@ ApplicationWindow {
                 onTriggered: Qt.quit();
             }
         }
+    }
+    statusBar: StatusBar {
+        id: statusBar
+        width: parent.width
+        height: 20
+        Row {
+            anchors.fill: parent
+            Label { text: "Score: " }
+            Label {id: currentScore; text: myModel.config.score}
+            Label { text: "       Moves Left: "}
+            Label { id: movesLeft; text: myModel.config.maxMoves - myModel.config.moves}
+            Label { text: "       Minimum Score: "}
+            Label { id: minScore; text: myModel.config.minScore}
+        }
+
     }
     MessageDialog {
         id: messageDialog

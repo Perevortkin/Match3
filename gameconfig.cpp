@@ -5,10 +5,25 @@
 #include <QJsonDocument>
 #include <QFile>
 
-GameConfig::GameConfig()
+GameConfig::GameConfig():QObject(0)
 {
-    QFile file("config.json");
-    file.open(QIODevice::ReadOnly);
+    m_moves = 0;
+    m_score = 0;
+    QFile file("../match3/config.json");
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() <<"Doesn`t opened";
+
+        m_columns = 10;
+        m_rows = 10;
+        m_elementScore = 60;
+        m_minScore = 10000;
+        m_maxMoves = 20;
+
+        for(int i = 0; i < 5; i++) {
+            m_types.push_back(i);
+        }
+    }
     QByteArray rawData = file.readAll();
     file.close();
     QJsonDocument doc(QJsonDocument::fromJson(rawData));
@@ -20,9 +35,8 @@ GameConfig::GameConfig()
     m_minScore = json["minScore"].toInt();
     m_maxMoves = json["maxMoves"].toInt();
 
-    for(int i = 0; i < q.size(); i++)
-    {
-       m_types.push_back(q[i].toInt());
+    for(int i = 0; i < q.size(); i++) {
+        m_types.push_back(q[i].toInt());
     }
     qDebug() << "columns" << m_columns;
     qDebug() << "rows" << m_rows;
@@ -32,43 +46,38 @@ GameConfig::GameConfig()
 
 }
 
-GameConfig::GameConfig(const GameConfig & config)
-{
+GameConfig::GameConfig(const GameConfig & config):QObject(0) {
     m_columns = config.columns();
     m_rows = config.rows();
     m_elementScore = config.elementScore();
     m_minScore = config.minScore();
     m_maxMoves = config.maxMoves();
     m_types = config.types();
+    m_score = config.score();
+    m_moves = config.moves();
 }
 
-int GameConfig::columns() const
-{
+int GameConfig::columns() const {
     return m_columns;
 }
 
-int GameConfig::rows() const
-{
+int GameConfig::rows() const {
     return m_rows;
 }
 
-int GameConfig::elementScore() const
-{
+int GameConfig::elementScore() const {
     return m_elementScore;
 }
 
-int GameConfig::minScore() const
-{
+int GameConfig::minScore() const {
     return m_minScore;
 }
 
-int GameConfig::maxMoves() const
-{
+int GameConfig::maxMoves() const {
     return m_maxMoves;
 }
 
-void GameConfig::setcolumns(int columns)
-{
+void GameConfig::setcolumns(int columns) {
     if (m_columns == columns)
         return;
 
@@ -78,8 +87,7 @@ void GameConfig::setcolumns(int columns)
 
 
 
-void GameConfig::setRows(int rows)
-{
+void GameConfig::setRows(int rows) {
     if (m_rows == rows)
         return;
 
@@ -87,8 +95,7 @@ void GameConfig::setRows(int rows)
     emit rowsChanged(rows);
 }
 
-void GameConfig::setElementScore(int elementScore)
-{
+void GameConfig::setElementScore(int elementScore) {
     if (m_elementScore == elementScore)
         return;
 
@@ -96,8 +103,7 @@ void GameConfig::setElementScore(int elementScore)
     emit elementScoreChanged(elementScore);
 }
 
-void GameConfig::setMinScore(int minScore)
-{
+void GameConfig::setMinScore(int minScore) {
     if (m_minScore == minScore)
         return;
 
@@ -105,21 +111,37 @@ void GameConfig::setMinScore(int minScore)
     emit minScoreChanged(minScore);
 }
 
-void GameConfig::setMaxMoves(int maxMoves)
-{
+void GameConfig::setMaxMoves(int maxMoves) {
     if (m_maxMoves == maxMoves)
         return;
 
     m_maxMoves = maxMoves;
     emit maxMovesChanged(maxMoves);
 }
-QVector<int> GameConfig::types() const
+
+void GameConfig::setMoves(int moves)
 {
+    if (m_moves == moves)
+        return;
+
+    m_moves = moves;
+    emit movesChanged(moves);
+}
+
+void GameConfig::setScore(int score)
+{
+    static int someScore = 0;
+    someScore+= (score * m_elementScore);
+
+    m_score = someScore;
+    emit scoreChanged(someScore);
+}
+
+QVector<int> GameConfig::types() const {
     return m_types;
 }
 
-void GameConfig::setTypes(const QVector<int> &types)
-{
+void GameConfig::setTypes(const QVector<int> &types) {
     m_types = types;
 }
 
@@ -130,7 +152,19 @@ GameConfig &GameConfig::operator =(const GameConfig & config) {
     m_minScore = config.minScore();
     m_maxMoves = config.maxMoves();
     m_types = config.types();
+    m_score = config.score();
+    m_moves = config.moves();
     return *this;
+}
+
+int GameConfig::moves() const
+{
+    return m_moves;
+}
+
+int GameConfig::score()const
+{
+    return m_score;
 }
 
 
