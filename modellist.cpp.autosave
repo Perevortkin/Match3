@@ -34,19 +34,14 @@ bool ModelList::setData(const QModelIndex &index, const QVariant &value, int nRo
 
     if (nRole == Flag) {
         item->setFlag(value.toBool());
-        emit dataChanged(index, index);
-        return true;
     }
-    if (nRole == Name) {
+    else if (nRole == Name) {
         item->setName(value.toInt());
-        emit dataChanged(index, index);
-        return true;
     }
-    if (nRole == Path) {
-        emit dataChanged(index, index);
-        return true;
+    else if (nRole == Path) {
     }
-    return false;
+    emit dataChanged(index, index);
+    return true;
 }
 
 int ModelList::rowCount(const QModelIndex &parent) const {
@@ -230,6 +225,7 @@ void ModelList::setFirstSearchExecuted(bool firstSearchExecuted) {
 }
 
 void ModelList::setDataFlag(int index, QVariant flag) {
+    
     QModelIndex modelIndex = this->index(index);
     setData(modelIndex, flag, Flag);
 }

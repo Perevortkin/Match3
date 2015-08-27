@@ -102,10 +102,11 @@ ApplicationWindow {
 
             delegate: Component {
 
-                Item {
+                Rectangle {
                     id: item
                     width: view.cellWidth
                     height: view.cellHeight
+                     color: myModel.flag ? "red" : mainRect.color
                     Image {
                         id: iconLoader
                         anchors.centerIn: parent
@@ -122,6 +123,7 @@ ApplicationWindow {
                             //  console.log("Source: " + source + " index: " + index);
                         }
                     }
+                    Behavior on color {  ColorAnimation { duration: 200 }}
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {

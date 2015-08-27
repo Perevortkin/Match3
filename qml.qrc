@@ -9,5 +9,10 @@
         <file>icons/rain14.png</file>
         <file>icons/lightning31.png</file>
         <file>icons/cloudy65.png</file>
+        <file>icons/watermelon.png</file>
+        <file>icons/strawberry.png</file>
+        <file>icons/pear.png</file>
+        <file>icons/juice.png</file>
+        <file>icons/apple.png</file>
     </qresource>
 </RCC>

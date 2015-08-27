@@ -11,7 +11,6 @@ class ModelList: public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(GameConfig* config READ config NOTIFY configChanged)
-
 public:
     ModelList(QObject* pobj = 0);
     ModelList(GameConfig& config, QObject *pobj = 0);
@@ -34,8 +33,8 @@ public:
 
     GameConfig* config();
     void swapTwoElementsWithoutSearching(int from, int to);
-
     void setFirstSearchExecuted(bool firstSearchExecuted);
+    void setDataFlag(int index, QVariant color);
 
 signals:
     void configChanged(GameConfig config);
@@ -46,7 +45,6 @@ private:
     QList<Item> m_list;
     QVector <QVector<int> > removeVerticalMatch;
     QVector <QVector<int> > removeHorizontalMatch;
-
 };
 
 #endif // MODELLIST_H
