@@ -14,5 +14,8 @@
         <file>icons/pear.png</file>
         <file>icons/juice.png</file>
         <file>icons/apple.png</file>
+        <file>icons/pomegranate.png</file>
+        <file>icons/pepper.png</file>
+        <file>icons/carrot.png</file>
     </qresource>
 </RCC>

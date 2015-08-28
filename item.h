@@ -2,18 +2,25 @@
 #define ITEM_H
 
 #include <QString>
+#include <QObject>
+#include <QPointer>
+class Item: public QObject
+{
 
-class Item {
-
+    Q_OBJECT
 public:
+
     Item();
+    Item(const Item &);
+    void refresh();
     void getRandomIcon();
     int getName() const;
     QString getIcon() const;
-     bool getFlag() const;
+    bool getFlag() const;
 
     void setName(int name);
     void setFlag(bool flag);
+    Item& operator = (const Item &);
 
 private:
 

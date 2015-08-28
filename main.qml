@@ -23,26 +23,6 @@ ApplicationWindow {
         color: "grey"
         border.color: "black"
 
-
-        Component {
-
-            id: highlight
-
-            Rectangle {
-
-                width: view.cellWidth
-                height: view.cellHeight
-
-                x: view.currentItem.x
-                y: view.currentItem.y
-                color: "lightsteelblue"
-                radius: 5
-
-                Behavior on x { SpringAnimation { spring: 3; damping: 0.2 } }
-                Behavior on y { SpringAnimation { spring: 3; damping: 0.2 } }
-            }
-        }
-
         GridView {
 
             id: view
@@ -51,8 +31,6 @@ ApplicationWindow {
             cellWidth:   mainRect.width / myModel.config.columns
             interactive: false
 
-            highlight: highlight
-            highlightFollowsCurrentItem: false
             focus: true
 
             model: myModel
@@ -63,7 +41,7 @@ ApplicationWindow {
 
                 NumberAnimation {
                     id: anim
-                    easing.type: Easing.OutCubic; properties: "y"; duration: 500
+                    easing.type: Easing.OutCubic; properties: "x, y"; duration: 500
                     alwaysRunToEnd: true
                 }
                 onRunningChanged:
@@ -71,10 +49,10 @@ ApplicationWindow {
                     if (!anim.running) {
                         // stop
                         //    myModel.searchForMatch();
-                        //     console.log("fgdgf");
+                        //console.log("AnimationStopped");
                     } else {
                         // start
-                        //  console.log("aaaaa");
+                        //console.log("AnimationStatted");
                     }
 
                 }
@@ -83,7 +61,7 @@ ApplicationWindow {
 
                 NumberAnimation {
                     id: anim1
-                    easing.type: Easing.OutCubic; properties: "y"; duration: 500
+                    easing.type: Easing.OutCubic; properties: "x, y"; duration: 500
                     alwaysRunToEnd: true
                 }
                 onRunningChanged:
@@ -91,7 +69,6 @@ ApplicationWindow {
                     if (!anim1.running) {
                         // stop
                         //     myModel.searchForMatch();
-                        //     console.log("fgdgf");
                     } else {
                         // start
                         //  console.log("aaaaa");
@@ -102,44 +79,43 @@ ApplicationWindow {
 
             delegate: Component {
 
-                Rectangle {
+                Item {
                     id: item
                     width: view.cellWidth
                     height: view.cellHeight
-                     color: myModel.flag ? "red" : mainRect.color
+
                     Image {
                         id: iconLoader
                         anchors.centerIn: parent
                         source: model.path
-                        cache: false
                         width: item.width * 0.7
                         height: item.height * 0.7
+
                         Text {
                             anchors.centerIn: parent
                             text: index + " " + model.name
-                            color:"white"
-                        }
-                        onSourceChanged: {
-                            //  console.log("Source: " + source + " index: " + index);
+                            color:"black"
+                                //color: myModel.flag ? "red" : mainRect.color
                         }
                     }
-                    Behavior on color {  ColorAnimation { duration: 200 }}
+
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
                             //console.log("@@@CLICK: " + iconLoader.source + " index: " + index + " Name: " + model.name);
                             view.currentIndex = index;
                             // console.log("current name: " + myModel.getName(index));
-
                             if (root.clicked && (index != root.index)) {
                                 myModel.swapTwoElements(root.index, index);
                                 root.clicked = false;
+                                if (myModel.config.isVictory) {
+                                    messageDialog.show("Level Completed");
+                                }
                             }
                             else {
                                 root.clicked = true;
                                 root.index = index;
                             }
-
                         }
                     }
                 }
@@ -177,7 +153,7 @@ ApplicationWindow {
     }
     MessageDialog {
         id: messageDialog
-        title: qsTr("May I have your attention, please?")
+        title: qsTr("Victory")
 
         function show(caption) {
             messageDialog.text = caption;

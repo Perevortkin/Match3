@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QAbstractListModel>
+#include <QPointer>
 
 #include "item.h"
 #include "gameconfig.h"
@@ -11,6 +12,7 @@ class ModelList: public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(GameConfig* config READ config NOTIFY configChanged)
+
 public:
     ModelList(QObject* pobj = 0);
     ModelList(GameConfig& config, QObject *pobj = 0);
@@ -24,12 +26,18 @@ public:
     enum Roles { Name = Qt::UserRole + 1, Path, Flag};
 
     void addItem(const Item &c);
-    Q_INVOKABLE bool searchForMatch();
-    Q_INVOKABLE void swapTwoElements(int from, int to);
-    void remove();
-    Q_INVOKABLE int getName(int index);
 
-    void removeItems();
+    Q_INVOKABLE void swapTwoElements(int from, int to);
+
+    void remove();
+    void removeHorizontalMatch();
+    void removeVerticalMatch();
+
+    bool searchForMatch();
+    bool verticalSearchMatch();
+    bool horizontalSearchMatch();
+
+    int getIndex(QPointer<Item> item);
 
     GameConfig* config();
     void swapTwoElementsWithoutSearching(int from, int to);
@@ -43,8 +51,8 @@ private:
     bool m_firstSearchExecuted;
     GameConfig m_config;
     QList<Item> m_list;
-    QVector <QVector<int> > removeVerticalMatch;
-    QVector <QVector<int> > removeHorizontalMatch;
+    QVector <QVector<QPointer<Item> > > m_removeVerticalMatch;
+    QVector <QVector<QPointer<Item> > > m_removeHorizontalMatch;
 };
 
 #endif // MODELLIST_H

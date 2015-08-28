@@ -13,6 +13,7 @@ class GameConfig: public QObject
     Q_PROPERTY(int maxMoves READ maxMoves WRITE setMaxMoves NOTIFY maxMovesChanged)
     Q_PROPERTY(int moves READ moves WRITE setMoves NOTIFY movesChanged)
     Q_PROPERTY(int score READ score WRITE setScore NOTIFY scoreChanged)
+    Q_PROPERTY(bool isVictory READ isVictory WRITE setIsVictory NOTIFY isVictoryChanged)
 public:
     GameConfig();
     GameConfig(const GameConfig &);
@@ -25,11 +26,13 @@ public:
     int moves()const;
     int score()const;
 
+    void isLevelCompleted();
+
     QVector<int> types() const;
     void setTypes(const QVector<int> &types);
     GameConfig & operator =(const GameConfig &);
 
-
+    bool isVictory() const;
 
 public slots:
     void setcolumns(int columns);
@@ -40,6 +43,8 @@ public slots:
 
     void setMoves(int moves);
     void setScore(int score);
+
+    void setIsVictory(bool isVictory);
 
 signals:
     void columnsChanged(int columns);
@@ -52,6 +57,8 @@ signals:
 
     void scoreChanged(int score);
 
+    void isVictoryChanged(bool isVictory);
+
 private:
     int m_columns;
     int m_rows;
@@ -61,6 +68,7 @@ private:
     QVector<int> m_types;
     int m_moves;
     int m_score;
+    bool m_isVictory;
 };
 
 #endif // GAMECONFIG_H

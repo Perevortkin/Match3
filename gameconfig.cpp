@@ -7,6 +7,7 @@
 
 GameConfig::GameConfig():QObject(0)
 {
+    m_isVictory = false;
     m_moves = 0;
     m_score = 0;
     QFile file("../match3/config.json");
@@ -137,6 +138,12 @@ void GameConfig::setScore(int score)
     emit scoreChanged(someScore);
 }
 
+void GameConfig::setIsVictory(bool isVictory)
+{
+    m_isVictory = isVictory;
+    emit isVictoryChanged(isVictory);
+}
+
 QVector<int> GameConfig::types() const {
     return m_types;
 }
@@ -157,6 +164,11 @@ GameConfig &GameConfig::operator =(const GameConfig & config) {
     return *this;
 }
 
+bool GameConfig::isVictory() const
+{
+    return m_isVictory;
+}
+
 int GameConfig::moves() const
 {
     return m_moves;
@@ -165,6 +177,13 @@ int GameConfig::moves() const
 int GameConfig::score()const
 {
     return m_score;
+}
+
+void GameConfig::isLevelCompleted()
+{
+    if (m_score >= m_minScore) {
+        setIsVictory(true);
+    }
 }
 
 
