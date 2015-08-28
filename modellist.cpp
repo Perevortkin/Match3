@@ -22,7 +22,7 @@ QVariant ModelList::data(const QModelIndex &index, int nRole) const {
     }
     else if (nRole == Path)
         return item.getIcon();
-    else if (nRole ==Flag)
+    else if (nRole == Flag)
         return item.getFlag();
     return QVariant();
 
@@ -254,7 +254,7 @@ void ModelList::setFirstSearchExecuted(bool firstSearchExecuted) {
 
 void ModelList::setDataFlag(int index, QVariant flag) {
 
-    QModelIndex modelIndex = this->index(index);
+   QModelIndex modelIndex = createIndex(index, 0);
     setData(modelIndex, flag, Flag);
 }
 
@@ -296,6 +296,25 @@ void ModelList::remove()
 
     removeHorizontalMatch();
     removeVerticalMatch();
+    for (int i = 0; i < m_config.rows() * m_config.columns(); i++) {
+        if (m_list[i].getFlag()) {
+            int index = i;
+            int k = 0;
+            while (  k < m_config.columns() ) {
+                swapTwoElementsWithoutSearching(index,index + m_config.columns());
+                k++;
+                index += m_config.columns();
+            }
+            beginInsertRows(QModelIndex(), index, index);
+            m_list.insert(index, Item());
+            endInsertRows();
+
+            beginRemoveRows(QModelIndex(), index + 1, index + 1 );
+            m_list.removeAt(index + 1);
+            endRemoveRows();
+        }
+
+    }
 
     if (!m_firstSearchExecuted) {
         searchForMatch();

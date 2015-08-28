@@ -8,6 +8,7 @@ class Item: public QObject
 {
 
     Q_OBJECT
+    Q_PROPERTY(bool flag READ getFlag WRITE setFlag NOTIFY flagChanged)
 public:
 
     Item();
@@ -21,7 +22,8 @@ public:
     void setName(int name);
     void setFlag(bool flag);
     Item& operator = (const Item &);
-
+signals:
+  void  flagChanged();
 private:
 
     QString m_Icon;

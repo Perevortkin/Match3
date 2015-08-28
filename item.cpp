@@ -36,6 +36,7 @@ bool Item::getFlag() const {
 
 void Item::setFlag(bool flag) {
     m_flag = flag;
+    emit flagChanged();
 }
 
 Item &Item::operator =(const Item & item)

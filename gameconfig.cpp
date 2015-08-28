@@ -39,12 +39,6 @@ GameConfig::GameConfig():QObject(0)
     for(int i = 0; i < q.size(); i++) {
         m_types.push_back(q[i].toInt());
     }
-    qDebug() << "columns" << m_columns;
-    qDebug() << "rows" << m_rows;
-    qDebug() << "elementScore" << m_elementScore;
-    qDebug() << "minScore" << m_minScore;
-    qDebug() << "maxMoves" << m_maxMoves;
-
 }
 
 GameConfig::GameConfig(const GameConfig & config):QObject(0) {

@@ -87,35 +87,37 @@ ApplicationWindow {
                     Image {
                         id: iconLoader
                         anchors.centerIn: parent
-                        source: model.path
+                        source: path
                         width: item.width * 0.7
                         height: item.height * 0.7
-
+                        opacity: flag ? 0 : 1
+                        Behavior on opacity {NumberAnimation {duration: 800} }
                         Text {
                             anchors.centerIn: parent
-                            text: index + " " + model.name
-                            color:"black"
-                                //color: myModel.flag ? "red" : mainRect.color
+                            text: index + " " + name
+                            //color:"black"
+                            color: flag ? "red" : "black"
                         }
                     }
 
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            //console.log("@@@CLICK: " + iconLoader.source + " index: " + index + " Name: " + model.name);
+
                             view.currentIndex = index;
-                            // console.log("current name: " + myModel.getName(index));
-                            if (root.clicked && (index != root.index)) {
+
+                             if (root.clicked && (index != root.index)) {
                                 myModel.swapTwoElements(root.index, index);
                                 root.clicked = false;
-                                if (myModel.config.isVictory) {
+                                 root.index = index;
+                                if (myModel.config.isVictory && (myModel.config.moves >= 0)) {
                                     messageDialog.show("Level Completed");
                                 }
                             }
-                            else {
-                                root.clicked = true;
-                                root.index = index;
-                            }
+                             else if (!root.clicked){
+                                 root.clicked = true;
+                                 root.index = index;
+                             }
                         }
                     }
                 }

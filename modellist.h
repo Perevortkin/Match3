@@ -12,7 +12,6 @@ class ModelList: public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(GameConfig* config READ config NOTIFY configChanged)
-
 public:
     ModelList(QObject* pobj = 0);
     ModelList(GameConfig& config, QObject *pobj = 0);
