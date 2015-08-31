@@ -8,8 +8,7 @@
 #include "item.h"
 #include "gameconfig.h"
 
-class ModelList: public QAbstractListModel
-{
+class ModelList: public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(GameConfig* config READ config NOTIFY configChanged)
 public:
@@ -21,23 +20,16 @@ public:
     QVariant headerData(int nSection, Qt::Orientation orientation, int nRole = Qt::DisplayRole) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
     QHash<int, QByteArray> roleNames() const;
-
     enum Roles { Name = Qt::UserRole + 1, Path, Flag};
-
     void addItem(const Item &c);
-
     Q_INVOKABLE void swapTwoElements(int from, int to);
-
     void remove();
     void removeHorizontalMatch();
     void removeVerticalMatch();
-
     bool searchForMatch();
     bool verticalSearchMatch();
     bool horizontalSearchMatch();
-
     int getIndex(QPointer<Item> item);
-
     GameConfig* config();
     void swapTwoElementsWithoutSearching(int from, int to);
     void setFirstSearchExecuted(bool firstSearchExecuted);

@@ -3,8 +3,7 @@
 #include <QObject>
 #include <QVector>
 #include <QDebug>
-class GameConfig: public QObject
-{
+class GameConfig: public QObject {
     Q_OBJECT
     Q_PROPERTY(int columns READ columns WRITE setcolumns NOTIFY columnsChanged)
     Q_PROPERTY(int rows READ rows WRITE setRows NOTIFY rowsChanged)
@@ -22,16 +21,12 @@ public:
     int elementScore() const;
     int minScore() const;
     int maxMoves() const;
-
     int moves()const;
     int score()const;
-
     void isLevelCompleted();
-
     QVector<int> types() const;
     void setTypes(const QVector<int> &types);
     GameConfig & operator =(const GameConfig &);
-
     bool isVictory() const;
 
 public slots:
@@ -40,10 +35,8 @@ public slots:
     void setElementScore(int elementScore);
     void setMinScore(int minScore);
     void setMaxMoves(int maxMoves);
-
     void setMoves(int moves);
     void setScore(int score);
-
     void setIsVictory(bool isVictory);
 
 signals:
@@ -52,11 +45,8 @@ signals:
     void elementScoreChanged(int elementScore);
     void minScoreChanged(int minScore);
     void maxMovesChanged(int maxMoves);
-
     void movesChanged(int moves);
-
     void scoreChanged(int score);
-
     void isVictoryChanged(bool isVictory);
 
 private:

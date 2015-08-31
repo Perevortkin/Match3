@@ -5,22 +5,18 @@
 #include <QJsonDocument>
 #include <QFile>
 
-GameConfig::GameConfig():QObject(0)
-{
+GameConfig::GameConfig():QObject(0) {
     m_isVictory = false;
     m_moves = 0;
     m_score = 0;
     QFile file("../match3/config.json");
-
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() <<"Doesn`t opened";
-
         m_columns = 10;
         m_rows = 10;
         m_elementScore = 60;
         m_minScore = 10000;
         m_maxMoves = 20;
-
         for(int i = 0; i < 5; i++) {
             m_types.push_back(i);
         }
@@ -35,7 +31,6 @@ GameConfig::GameConfig():QObject(0)
     m_elementScore = json["elementScore"].toInt();
     m_minScore = json["minScore"].toInt();
     m_maxMoves = json["maxMoves"].toInt();
-
     for(int i = 0; i < q.size(); i++) {
         m_types.push_back(q[i].toInt());
     }
@@ -75,65 +70,43 @@ int GameConfig::maxMoves() const {
 void GameConfig::setcolumns(int columns) {
     if (m_columns == columns)
         return;
-
     m_columns = columns;
     emit columnsChanged(columns);
 }
 
-
-
 void GameConfig::setRows(int rows) {
-    if (m_rows == rows)
-        return;
-
     m_rows = rows;
     emit rowsChanged(rows);
 }
 
 void GameConfig::setElementScore(int elementScore) {
-    if (m_elementScore == elementScore)
-        return;
-
     m_elementScore = elementScore;
     emit elementScoreChanged(elementScore);
 }
 
 void GameConfig::setMinScore(int minScore) {
-    if (m_minScore == minScore)
-        return;
-
     m_minScore = minScore;
     emit minScoreChanged(minScore);
 }
 
 void GameConfig::setMaxMoves(int maxMoves) {
-    if (m_maxMoves == maxMoves)
-        return;
-
     m_maxMoves = maxMoves;
     emit maxMovesChanged(maxMoves);
 }
 
-void GameConfig::setMoves(int moves)
-{
-    if (m_moves == moves)
-        return;
-
+void GameConfig::setMoves(int moves) {
     m_moves = moves;
     emit movesChanged(moves);
 }
 
-void GameConfig::setScore(int score)
-{
+void GameConfig::setScore(int score) {
     static int someScore = 0;
-    someScore+= (score * m_elementScore);
-
+    someScore += (score * m_elementScore);
     m_score = someScore;
     emit scoreChanged(someScore);
 }
 
-void GameConfig::setIsVictory(bool isVictory)
-{
+void GameConfig::setIsVictory(bool isVictory) {
     m_isVictory = isVictory;
     emit isVictoryChanged(isVictory);
 }
@@ -158,24 +131,20 @@ GameConfig &GameConfig::operator =(const GameConfig & config) {
     return *this;
 }
 
-bool GameConfig::isVictory() const
-{
+bool GameConfig::isVictory() const {
     return m_isVictory;
 }
 
-int GameConfig::moves() const
-{
+int GameConfig::moves() const {
     return m_moves;
 }
 
-int GameConfig::score()const
-{
+int GameConfig::score()const {
     return m_score;
 }
 
-void GameConfig::isLevelCompleted()
-{
-    if (m_score >= m_minScore) {
+void GameConfig::isLevelCompleted() {
+    if (m_score >= m_minScore && m_moves <= m_maxMoves) {
         setIsVictory(true);
     }
 }

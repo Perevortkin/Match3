@@ -26,17 +26,17 @@ ApplicationWindow {
         GridView {
 
             id: view
+
             anchors.fill: parent
             cellHeight:  mainRect.height  / myModel.config.rows
             cellWidth:   mainRect.width / myModel.config.columns
+
             interactive: false
-
             focus: true
-
-            model: myModel
             snapMode: GridView.SnapToRow
             verticalLayoutDirection: GridView.BottomToTop
 
+            model: myModel
             move: Transition {
 
                 NumberAnimation {
@@ -44,28 +44,24 @@ ApplicationWindow {
                     easing.type: Easing.OutCubic; properties: "x, y"; duration: 500
                     alwaysRunToEnd: true
                 }
-                onRunningChanged:
-                {
+                onRunningChanged: {
                     if (!anim.running) {
                         // stop
                         //    myModel.searchForMatch();
-                        //console.log("AnimationStopped");
+                        console.log("AnimationStopped");
                     } else {
                         // start
                         //console.log("AnimationStatted");
                     }
-
                 }
             }
             moveDisplaced: Transition {
-
                 NumberAnimation {
                     id: anim1
                     easing.type: Easing.OutCubic; properties: "x, y"; duration: 500
                     alwaysRunToEnd: true
                 }
-                onRunningChanged:
-                {
+                onRunningChanged: {
                     if (!anim1.running) {
                         // stop
                         //     myModel.searchForMatch();
@@ -73,25 +69,26 @@ ApplicationWindow {
                         // start
                         //  console.log("aaaaa");
                     }
-
                 }
             }
-
             delegate: Component {
-
                 Item {
                     id: item
+
                     width: view.cellWidth
                     height: view.cellHeight
 
                     Image {
                         id: iconLoader
+
                         anchors.centerIn: parent
-                        source: path
                         width: item.width * 0.7
                         height: item.height * 0.7
+
+                        source: path
                         opacity: flag ? 0 : 1
-                        Behavior on opacity {NumberAnimation {duration: 800} }
+
+                        Behavior on opacity { NumberAnimation {duration: 800} }
                         Text {
                             anchors.centerIn: parent
                             text: index + " " + name
@@ -99,32 +96,26 @@ ApplicationWindow {
                             color: flag ? "red" : "black"
                         }
                     }
-
                     MouseArea {
+
                         anchors.fill: parent
                         onClicked: {
-
                             view.currentIndex = index;
-
-                             if (root.clicked && (index != root.index)) {
+                            if (root.clicked && (index != root.index)) {
                                 myModel.swapTwoElements(root.index, index);
                                 root.clicked = false;
-                                 root.index = index;
-                                if (myModel.config.isVictory && (myModel.config.moves >= 0)) {
-                                    messageDialog.show("Level Completed");
-                                }
+                                root.index = index;
                             }
-                             else if (!root.clicked){
-                                 root.clicked = true;
-                                 root.index = index;
-                             }
+                            else if (!root.clicked){
+                                root.clicked = true;
+                                root.index = index;
+                            }
                         }
                     }
                 }
             }
         }
     }
-
     menuBar: MenuBar {
         Menu {
             title: qsTr("&File")
@@ -151,15 +142,15 @@ ApplicationWindow {
             Label { text: "       Minimum Score: "}
             Label { id: minScore; text: myModel.config.minScore}
         }
-
     }
     MessageDialog {
         id: messageDialog
-        title: qsTr("Victory")
 
-        function show(caption) {
-            messageDialog.text = caption;
-            messageDialog.open();
-        }
+        property bool isVictory: myModel.config.isVictory
+        property bool  movesNotAvailable: myModel.config.moves > myModel.config.maxMoves
+
+        title: movesNotAvailable ? qsTr("Try again") : qsTr("Victory")
+        visible: isVictory || movesNotAvailable
+        text: movesNotAvailable ? "Level failed" : "Level Completed"
     }
 }
