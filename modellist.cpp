@@ -241,17 +241,17 @@ void ModelList::setDataFlag(int index, QVariant flag) {
 }
 
 QVariantMap ModelList::get(int row) {
-        QHash<int,QByteArray> names = roleNames();
-        QHashIterator<int, QByteArray> i(names);
-        QVariantMap res;
-        while (i.hasNext()) {
-            i.next();
-            QModelIndex idx = index(row, 0);
-            QVariant data = idx.data(i.key());
-            res[i.value()] = data;
-            //cout << i.key() << ": " << i.value() << endl;
-        }
-        return res;
+    QHash<int,QByteArray> names = roleNames();
+    QHashIterator<int, QByteArray> i(names);
+    QVariantMap res;
+    while (i.hasNext()) {
+        i.next();
+        QModelIndex idx = index(row, 0);
+        QVariant data = idx.data(i.key());
+        res[i.value()] = data;
+        //cout << i.key() << ": " << i.value() << endl;
+    }
+    return res;
 }
 
 void ModelList::newGame() {
@@ -269,9 +269,10 @@ void ModelList::newGame() {
 void ModelList::refresh(int index) {
     QModelIndex modelIndex = createIndex(index, 0);
     m_list[index].refresh();
-     emit dataChanged(modelIndex, modelIndex);
+    emit dataChanged(modelIndex, modelIndex);
 
 }
+
 int ModelList::swapTwoElements(int from, int to) {
     int columns = m_config.columns();
     if ( from + columns == to || from - columns == to || from + 1 == to || from - 1 == to) {
@@ -296,7 +297,7 @@ int ModelList::swapTwoElements(int from, int to) {
         }
         return -2;
     }
-     return to;
+    return to;
 
 }
 

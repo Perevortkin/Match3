@@ -11,11 +11,6 @@ Item::Item(const Item & item):QObject(0) {
     m_Icon = item.getIcon();
 }
 
-
-void Item::refresh() {
-    getRandomIcon();
-}
-
 int Item::getName() const {
     return m_name;
 }
@@ -65,6 +60,10 @@ void Item::getRandomIcon() {
         m_Icon = "qrc:/icons/icons/watermelon.png";
         break;
     }
+}
+
+void Item::refresh() {
+    getRandomIcon();
 }
 
 

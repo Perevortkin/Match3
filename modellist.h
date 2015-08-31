@@ -36,7 +36,8 @@ public:
     void setDataFlag(int index, QVariant color);
     Q_INVOKABLE QVariantMap get(int row);
     Q_INVOKABLE void newGame();
-    void refresh(int index);
+    void refresh(int index); 
+    bool xAnimation() const;
 
 signals:
     void configChanged(GameConfig config);

@@ -11,8 +11,8 @@ class Item: public QObject {
 public:
     Item();
     Item(const Item &);
-    void refresh();
     void getRandomIcon();
+    void refresh();
     int getName() const;
     QString getIcon() const;
     bool getFlag() const;

@@ -39,15 +39,23 @@ ApplicationWindow {
             model: myModel
             move: Transition {
 
-                NumberAnimation {
-                    id: anim
-                    easing.type: Easing.OutCubic; properties: "x, y"; duration: 500
-                    alwaysRunToEnd: true
+                ParallelAnimation {
+                    NumberAnimation {
+                        easing.type: Easing.OutCubic
+                        properties: "y"
+                        duration: 500
+                        alwaysRunToEnd: true
+                    }
+                    NumberAnimation {
+                        easing.type: Easing.OutCubic
+                        properties: "x"
+                        duration: 500
+                        alwaysRunToEnd: true
+                    }
                 }
             }
             moveDisplaced: Transition {
                 NumberAnimation {
-                    id: anim1
                     easing.type: Easing.OutCubic; properties: "x, y"; duration: 500
                     alwaysRunToEnd: true
                 }
@@ -73,7 +81,7 @@ ApplicationWindow {
                         Behavior on opacity { NumberAnimation {duration: 800} }
                         Text {
                             anchors.centerIn: parent
-                            text: index + " " + name
+                            //text: index + " " + name
                         }
                     }
 
