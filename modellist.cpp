@@ -89,8 +89,7 @@ bool ModelList::searchForMatch() {
         QTimer *timer = new QTimer(this);
         connect(timer, &QTimer::timeout,
                 [=]() {
-            remove();
-        });
+            remove();});
         timer->setSingleShot(true);
         timer->start(500);
     }
@@ -241,11 +240,43 @@ void ModelList::setDataFlag(int index, QVariant flag) {
     setData(modelIndex, flag, Flag);
 }
 
+QVariantMap ModelList::get(int row) {
+        QHash<int,QByteArray> names = roleNames();
+        QHashIterator<int, QByteArray> i(names);
+        QVariantMap res;
+        while (i.hasNext()) {
+            i.next();
+            QModelIndex idx = index(row, 0);
+            QVariant data = idx.data(i.key());
+            res[i.value()] = data;
+            //cout << i.key() << ": " << i.value() << endl;
+        }
+        return res;
+}
 
-void ModelList::swapTwoElements(int from, int to) {
+void ModelList::newGame() {
+    m_firstSearchExecuted = false;
+    m_config.setMoves(0);
+    m_config.setScore(0);
+
+    for (int i = 0; i < m_config.rows() * m_config.columns(); i++) {
+        refresh(i);
+    }
+    searchForMatch();
+    m_firstSearchExecuted = true;
+}
+
+void ModelList::refresh(int index) {
+    QModelIndex modelIndex = createIndex(index, 0);
+    m_list[index].refresh();
+     emit dataChanged(modelIndex, modelIndex);
+
+}
+int ModelList::swapTwoElements(int from, int to) {
     int columns = m_config.columns();
     if ( from + columns == to || from - columns == to || from + 1 == to || from - 1 == to) {
         swapTwoElementsWithoutSearching(from, to);
+
         if (!searchForMatch()) {
             QTimer *timer = new QTimer(this);
             connect(timer, &QTimer::timeout,
@@ -253,13 +284,20 @@ void ModelList::swapTwoElements(int from, int to) {
                 swapTwoElementsWithoutSearching(to, from); });
             timer->setSingleShot(true);
             timer->start(500);
+            return -1;
         }
         else {
             static int moves = 0;
+            if (m_config.moves() == 0) {
+                moves = 0;
+            }
             moves++;
             m_config.setMoves(moves);
         }
+        return -2;
     }
+     return to;
+
 }
 
 void ModelList::remove() {

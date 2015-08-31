@@ -22,7 +22,7 @@ public:
     QHash<int, QByteArray> roleNames() const;
     enum Roles { Name = Qt::UserRole + 1, Path, Flag};
     void addItem(const Item &c);
-    Q_INVOKABLE void swapTwoElements(int from, int to);
+    Q_INVOKABLE int swapTwoElements(int from, int to);
     void remove();
     void removeHorizontalMatch();
     void removeVerticalMatch();
@@ -34,6 +34,9 @@ public:
     void swapTwoElementsWithoutSearching(int from, int to);
     void setFirstSearchExecuted(bool firstSearchExecuted);
     void setDataFlag(int index, QVariant color);
+    Q_INVOKABLE QVariantMap get(int row);
+    Q_INVOKABLE void newGame();
+    void refresh(int index);
 
 signals:
     void configChanged(GameConfig config);

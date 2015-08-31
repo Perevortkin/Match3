@@ -7,7 +7,7 @@ ApplicationWindow {
     id: root
 
     property var clicked: false
-    property var index: 0
+    property var index: -1
 
     title: qsTr("Match 3")
     width: 800
@@ -44,31 +44,12 @@ ApplicationWindow {
                     easing.type: Easing.OutCubic; properties: "x, y"; duration: 500
                     alwaysRunToEnd: true
                 }
-                onRunningChanged: {
-                    if (!anim.running) {
-                        // stop
-                        //    myModel.searchForMatch();
-                        console.log("AnimationStopped");
-                    } else {
-                        // start
-                        //console.log("AnimationStatted");
-                    }
-                }
             }
             moveDisplaced: Transition {
                 NumberAnimation {
                     id: anim1
                     easing.type: Easing.OutCubic; properties: "x, y"; duration: 500
                     alwaysRunToEnd: true
-                }
-                onRunningChanged: {
-                    if (!anim1.running) {
-                        // stop
-                        //     myModel.searchForMatch();
-                    } else {
-                        // start
-                        //  console.log("aaaaa");
-                    }
                 }
             }
             delegate: Component {
@@ -81,6 +62,7 @@ ApplicationWindow {
                     Image {
                         id: iconLoader
 
+                        property bool scaleProperty: false
                         anchors.centerIn: parent
                         width: item.width * 0.7
                         height: item.height * 0.7
@@ -92,19 +74,46 @@ ApplicationWindow {
                         Text {
                             anchors.centerIn: parent
                             text: index + " " + name
-                            //color:"black"
-                            color: flag ? "red" : "black"
                         }
                     }
+
+                    SequentialAnimation {
+                        id: scaleAnim
+                        loops: Animation.Infinite
+                        alwaysRunToEnd: true
+                        running: root.clicked && (index === root.index) && root.clicked
+                        NumberAnimation {
+                            from: 1
+                            to: 1.3
+                            target: iconLoader
+                            property: "scale"
+                            duration: 300
+                            easing.type: Easing.InOutQuad
+                        }
+                        NumberAnimation {
+                            from: 1.3
+                            to: 1
+                            target: iconLoader
+                            property: "scale"
+                            duration: 300
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+
                     MouseArea {
 
                         anchors.fill: parent
                         onClicked: {
                             view.currentIndex = index;
+
                             if (root.clicked && (index != root.index)) {
-                                myModel.swapTwoElements(root.index, index);
                                 root.clicked = false;
-                                root.index = index;
+                                if (myModel.config.moves < myModel.config.maxMoves) {
+                                    root.index = myModel.swapTwoElements(root.index, index);
+                                }
+                                if (root.index != -1 && root.index != -2) {
+                                    root.clicked = true;
+                                }
                             }
                             else if (!root.clicked){
                                 root.clicked = true;
@@ -120,8 +129,8 @@ ApplicationWindow {
         Menu {
             title: qsTr("&File")
             MenuItem {
-                text: qsTr("&Open")
-                onTriggered: messageDialog.show(qsTr("Open action triggered"));
+                text: qsTr("&New game")
+                onTriggered: myModel.newGame();
             }
             MenuItem {
                 text: qsTr("E&xit")
@@ -131,8 +140,10 @@ ApplicationWindow {
     }
     statusBar: StatusBar {
         id: statusBar
+
         width: parent.width
         height: 20
+
         Row {
             anchors.fill: parent
             Label { text: "Score: " }
@@ -147,10 +158,10 @@ ApplicationWindow {
         id: messageDialog
 
         property bool isVictory: myModel.config.isVictory
-        property bool  movesNotAvailable: myModel.config.moves > myModel.config.maxMoves
+        property bool  movesNotAvailable: myModel.config.moves === myModel.config.maxMoves
 
         title: movesNotAvailable ? qsTr("Try again") : qsTr("Victory")
         visible: isVictory || movesNotAvailable
-        text: movesNotAvailable ? "Level failed" : "Level Completed"
+        text: isVictory ? "Level Completed" : "Level failed"
     }
 }

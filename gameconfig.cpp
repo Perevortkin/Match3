@@ -100,7 +100,10 @@ void GameConfig::setMoves(int moves) {
 }
 
 void GameConfig::setScore(int score) {
-    static int someScore = 0;
+     static int someScore = 0;
+    if (!score) {
+        someScore = 0;
+    }
     someScore += (score * m_elementScore);
     m_score = someScore;
     emit scoreChanged(someScore);

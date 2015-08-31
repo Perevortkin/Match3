@@ -28,7 +28,6 @@ public:
     void setTypes(const QVector<int> &types);
     GameConfig & operator =(const GameConfig &);
     bool isVictory() const;
-
 public slots:
     void setcolumns(int columns);
     void setRows(int rows);
