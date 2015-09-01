@@ -104,7 +104,7 @@ bool ModelList::verticalSearchMatch() {
     bool isMatch = false;
     for (int i =  0; i < colCount; i++) {
         matches = 1;
-        for (int j = i; j < (colCount - 1) * rowCount + i; j += colCount) {
+        for (int j = i; j < (rowCount - 1) * colCount + i; j += colCount) {
             if (m_list[j].getName() == m_list[j + colCount].getName()) {
                 matches++;
             }
@@ -126,7 +126,7 @@ bool ModelList::verticalSearchMatch() {
                 m_removeVerticalMatch.push_front(match);
                 matches = 1;
             }
-            if (j + colCount == (colCount - 1) * rowCount + i && matches >= 3) {
+            if (j + colCount == (rowCount - 1) * colCount + i && matches >= 3) {
                 isMatch = true;
                 int k = j += colCount;
                 QVector<QPointer<Item> > match;
@@ -150,9 +150,9 @@ bool ModelList::horizontalSearchMatch() {
     int colCount = m_config.columns();
     int matches = 1;
     bool isMatch = false;
-    for (int i = 0; i < rowCount * colCount; i += rowCount) {
+    for (int i = 0; i < rowCount * colCount; i += colCount) {
         matches = 1;
-        for (int j = i; j < i + rowCount - 1; j++) {
+        for (int j = i; j < i + colCount - 1; j++) {
             if (m_list[j].getName() == m_list[j + 1].getName()) {
                 matches++;
             }
@@ -173,7 +173,7 @@ bool ModelList::horizontalSearchMatch() {
                 matches = 1;
                 m_removeHorizontalMatch.push_front(match);
             }
-            if (j + 1 == i + rowCount - 1 && matches >= 3) {
+            if (j + 1 == i + colCount - 1 && matches >= 3) {
                 int k = j + 1;
                 isMatch = true;
                 QVector<QPointer<Item> > match;

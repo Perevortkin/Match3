@@ -4,6 +4,6 @@
 	"types": [0, 1, 2, 3, 4],
 	"elementScore": 60,
     "minScore": 10000,
-	"maxMoves": 20
+    "maxMoves": 20
 }
                                            

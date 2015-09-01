@@ -81,7 +81,7 @@ ApplicationWindow {
                         Behavior on opacity { NumberAnimation {duration: 800} }
                         Text {
                             anchors.centerIn: parent
-                            //text: index + " " + name
+                            text: index + " " + name
                         }
                     }
 
@@ -89,7 +89,7 @@ ApplicationWindow {
                         id: scaleAnim
                         loops: Animation.Infinite
                         alwaysRunToEnd: true
-                        running: root.clicked && (index === root.index) && root.clicked
+                        running: root.clicked && (index === root.index)
                         NumberAnimation {
                             from: 1
                             to: 1.3
@@ -171,5 +171,6 @@ ApplicationWindow {
         title: movesNotAvailable ? qsTr("Try again") : qsTr("Victory")
         visible: isVictory || movesNotAvailable
         text: isVictory ? "Level Completed" : "Level failed"
+        onAccepted: myModel.newGame();
     }
 }
