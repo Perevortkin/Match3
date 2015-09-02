@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
-
+import QtQuick.Particles 2.0
 ApplicationWindow {
     id: root
 
@@ -92,7 +92,7 @@ ApplicationWindow {
                         id: scaleAnim
                         loops: Animation.Infinite
                         alwaysRunToEnd: true
-                        running: root.clicked && (index === root.index)
+                        //      running: root.clicked && (index === root.index)
                         NumberAnimation {
                             from: 1
                             to: 1.3
@@ -134,7 +134,36 @@ ApplicationWindow {
                         }
                     }
 
+                    ParticleSystem {
+                        id: particleSystem
+                        running: index === root.index
+                        visible: index === root.index
+                        anchors.fill: parent
+                        ImageParticle {
+                            anchors.fill: parent
+                            color: "blue"
+                            blueVariation: 0.8
+                            source: "qrc:/icons/icons/lightning31.png"
 
+
+                        }
+
+
+                        Emitter {
+                            emitRate: 100
+                            lifeSpan: 1000
+                            size: 5
+                            sizeVariation: 5
+                            // velocity: PointDirection{ x: 66; xVariation: 20 }
+                            width: view.cellWidth
+                            height: view.cellHeight
+                            shape: RectangleShape {
+                                fill:false
+                            }
+
+                        }
+
+                    }
                     MouseArea {
 
                         anchors.fill: parent
@@ -173,15 +202,15 @@ ApplicationWindow {
             }
         }
         Menu {
-             title: qsTr("Something")
-             MenuItem {
-                 text: qsTr("Use hint")
-                 onTriggered: {
+            title: qsTr("Something")
+            MenuItem {
+                text: qsTr("Use hint")
+                onTriggered: {
 
-                     root.clicked = false;
-                     myModel.hint();
-                 }
-             }
+                    root.clicked = false;
+                    myModel.hint();
+                }
+            }
         }
     }
     statusBar: StatusBar {
