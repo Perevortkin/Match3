@@ -11,6 +11,10 @@
 class ModelList: public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(GameConfig* config READ config NOTIFY configChanged)
+  //  Q_PROPERTY(int name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(int elementToSwap1 READ elementToSwap1 NOTIFY elementToSwap1Changed)
+    Q_PROPERTY(int elementToSwap2 READ elementToSwap2 NOTIFY elementToSwap2Changed)
+
 public:
     ModelList(QObject* pobj = 0);
     ModelList(GameConfig& config, QObject *pobj = 0);
@@ -21,8 +25,13 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
     QHash<int, QByteArray> roleNames() const;
     enum Roles { Name = Qt::UserRole + 1, Path, Flag};
-    void addItem(const Item &c);
+
     Q_INVOKABLE int swapTwoElements(int from, int to);
+    Q_INVOKABLE QVariantMap get(int row);
+    Q_INVOKABLE void newGame();
+    Q_INVOKABLE void hint();
+
+    void addItem(const Item & c);
     void remove();
     void removeHorizontalMatch();
     void removeVerticalMatch();
@@ -34,15 +43,25 @@ public:
     void swapTwoElementsWithoutSearching(int from, int to);
     void setFirstSearchExecuted(bool firstSearchExecuted);
     void setDataFlag(int index, QVariant color);
-    Q_INVOKABLE QVariantMap get(int row);
-    Q_INVOKABLE void newGame();
     void refresh(int index); 
-    bool xAnimation() const;
+
+    bool searchForPossibleMatch();
+
+    int elementToSwap1() const;
+
+    int elementToSwap2() const;
 
 signals:
     void configChanged(GameConfig config);
 
+    void elementToSwap1Changed(int elementToSwap1);
+
+    void elementToSwap2Changed(int elementToSwap2);
+
 private:
+
+    int m_elementToSwap1;
+    int m_elementToSwap2;
     bool m_firstSearchExecuted;
     GameConfig m_config;
     QList<Item> m_list;

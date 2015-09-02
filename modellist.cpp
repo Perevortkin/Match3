@@ -10,6 +10,8 @@ ModelList::ModelList(GameConfig & config, QObject *pobj)
     :QAbstractListModel(pobj) {
     m_firstSearchExecuted = false;
     m_config = config;
+    m_elementToSwap1 = -1;
+    m_elementToSwap2 = -1;
 }
 
 QVariant ModelList::data(const QModelIndex &index, int nRole) const {
@@ -273,8 +275,174 @@ void ModelList::refresh(int index) {
 
 }
 
+void ModelList::hint() {
+
+    int rows = m_config.rows();
+    int columns = m_config.columns();
+    int index;
+
+    if (!searchForPossibleMatch()) {
+        for (int i = 0; i < rows * columns; i++) {
+            index = i;
+
+            if ((index - 3) % columns != columns - 1 && index >= 3) {
+
+                if ( m_list[index - 3].getName() == m_list[index - 2].getName()) {
+                    if (m_list[index].getName() == m_list[index - 3].getName()) {
+                        m_elementToSwap1 = index;
+                        m_elementToSwap2 = index - 1;
+                        emit elementToSwap1Changed(index);
+                        emit elementToSwap2Changed(index - 1);
+                        qDebug() << "First: "<< m_elementToSwap1 <<"Second: "<< m_elementToSwap2;
+                        return;
+                    }
+                }
+            }
+            if ((index + 3) % columns != 0 && index + 3 < rows * columns) {
+
+                if (m_list[index + 3].getName() == m_list[index + 2].getName()) {
+                    if (m_list[index].getName() == m_list[index + 3].getName()) {
+                        m_elementToSwap1 = index;
+                        m_elementToSwap2 = index + 1;
+                        emit elementToSwap1Changed(index);
+                        emit elementToSwap2Changed(index + 1);
+                        qDebug() << "First: "<< m_elementToSwap1 <<"Second: "<< m_elementToSwap2;
+                        return;
+                    }
+                }
+            }
+            if (index - 3 * columns >= 0) {
+                if (m_list[index - 3 * columns].getName() == m_list[index - 2 * columns].getName()) {
+                    if (m_list[index].getName() == m_list[index - 3 * columns].getName()) {
+                        m_elementToSwap1 = index;
+                        m_elementToSwap2 = index - columns;
+                        emit elementToSwap1Changed(index);
+                        emit elementToSwap2Changed(index - columns);
+                        qDebug() << "First: "<< m_elementToSwap1 <<"Second: "<< m_elementToSwap2;
+                        return;
+                    }
+                }
+            }
+            if (index + 3 * columns < rows * columns) {
+
+                if (m_list[index + 3 * columns].getName() == m_list[index + 2 * columns].getName()) {
+                    if (m_list[index].getName() == m_list[index + 3 * columns].getName()) {
+                        m_elementToSwap1 = index;
+                        m_elementToSwap2 = index + columns;
+                        emit elementToSwap1Changed(index);
+                        emit elementToSwap2Changed(index + columns);
+                        qDebug() << "First: "<< m_elementToSwap1 <<"Second: "<< m_elementToSwap2;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
+
+bool ModelList::searchForPossibleMatch() {
+
+    int rows = m_config.rows();
+    int columns = m_config.columns();
+    int index;
+
+    bool leftTop = false;
+    bool leftBottom = false;
+    bool rightTop = false;
+    bool rightBottom = false;
+
+    for (int i = 0; i < rows * columns; i++) {
+        index = i;
+        //If this element aren`t first or last in row
+        if ( (index % columns != 0) && (index % columns != columns - 1) ) {
+
+            if (index + columns - 1 < rows * columns ) {
+
+                if (m_list[index].getName() == m_list[index + columns - 1].getName()) {
+                    leftTop = true;
+                }
+            }
+            if (index - columns + 1 > 0) {
+                if (m_list[index].getName() == m_list[index - columns + 1].getName()) {
+                    rightBottom = true;
+                }
+            }
+
+            if (leftTop || rightBottom) {
+
+                if (index - columns - 1 > 0) {
+
+                    if (m_list[index].getName() == m_list[index - columns - 1].getName()) {
+                        leftBottom = true;
+                    }
+                }
+                if (index + columns + 1 < rows * columns) {
+
+                    if (m_list[index].getName() == m_list[index + columns + 1].getName()) {
+                        rightTop = true;
+                    }
+                }
+            }
+            if (leftTop) {
+
+                if (leftTop && rightTop) {
+                    m_elementToSwap1 = index;
+                    m_elementToSwap2 = index + columns;
+                    emit elementToSwap1Changed(index);
+                    emit elementToSwap2Changed(index + columns);
+                    return true;
+                }
+                if (leftTop && leftBottom) {
+                    m_elementToSwap1 = index;
+                    m_elementToSwap2 = index - 1;
+                    emit elementToSwap1Changed(index);
+                    emit elementToSwap2Changed(index - 1);
+                    return true;
+                }
+            }
+            if (rightBottom) {
+
+                if (rightBottom && rightTop) {
+                    m_elementToSwap1 = index;
+                    m_elementToSwap2 = index + 1;
+                    emit elementToSwap1Changed(index);
+                    emit elementToSwap2Changed(index + 1);
+                    return true;
+                }
+                if (rightBottom && leftBottom) {
+                    m_elementToSwap1 = index;
+                    m_elementToSwap2 = index - columns;
+                    emit elementToSwap1Changed(index);
+                    emit elementToSwap2Changed(index - columns);
+                    return true;
+                }
+            }
+        }
+        leftTop = false;
+        leftBottom = false;
+        rightTop = false;
+        rightBottom = false;
+    }
+    return false;
+}
+
+int ModelList::elementToSwap1() const
+{
+    return m_elementToSwap1;
+}
+
+int ModelList::elementToSwap2() const
+{
+    return m_elementToSwap2;
+}
 int ModelList::swapTwoElements(int from, int to) {
     int columns = m_config.columns();
+
+    m_elementToSwap1 = - 1;
+    m_elementToSwap2 = - 1;
+    emit elementToSwap1Changed(-1);
+    emit elementToSwap2Changed(-1);
+
     if ( from + columns == to || from - columns == to || from + 1 == to || from - 1 == to) {
         swapTwoElementsWithoutSearching(from, to);
 

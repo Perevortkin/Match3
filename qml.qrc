@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>config.json</file>
+        <file>qml.qrc</file>
     </qresource>
     <qresource prefix="/icons">
         <file>icons/sunny62.png</file>
@@ -17,5 +18,6 @@
         <file>icons/pomegranate.png</file>
         <file>icons/pepper.png</file>
         <file>icons/carrot.png</file>
+        <file>icons/background1.jpg</file>
     </qresource>
 </RCC>
