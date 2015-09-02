@@ -20,8 +20,12 @@ ApplicationWindow {
 
         anchors.fill: parent
 
-        color: "grey"
         border.color: "black"
+
+        Image {
+            id: background
+            source: "qrc:/icons/icons/background1.jpg"
+        }
 
         GridView {
 
@@ -46,12 +50,12 @@ ApplicationWindow {
                         duration: 500
                         alwaysRunToEnd: true
                     }
-                    NumberAnimation {
-                        easing.type: Easing.OutCubic
-                        properties: "x"
-                        duration: 500
-                        alwaysRunToEnd: true
-                    }
+                    //                    NumberAnimation {
+                    //                        easing.type: Easing.OutCubic
+                    //                        properties: "x"
+                    //                        duration: 500
+                    //                        alwaysRunToEnd: true
+                    //                    }
                 }
             }
             moveDisplaced: Transition {
@@ -70,7 +74,6 @@ ApplicationWindow {
                     Image {
                         id: iconLoader
 
-                        property bool scaleProperty: false
                         anchors.centerIn: parent
                         width: item.width * 0.7
                         height: item.height * 0.7
@@ -108,6 +111,30 @@ ApplicationWindow {
                         }
                     }
 
+                    SequentialAnimation {
+                        id: scaleAnimForHint
+                        loops: 4
+                        alwaysRunToEnd: true
+                        running: (index === myModel.elementToSwap1 || index === myModel.elementToSwap2) && !root.clicked
+                        NumberAnimation {
+                            from: 1
+                            to: 1.3
+                            target: iconLoader
+                            property: "scale"
+                            duration: 300
+                            easing.type: Easing.InOutQuad
+                        }
+                        NumberAnimation {
+                            from: 1.3
+                            to: 1
+                            target: iconLoader
+                            property: "scale"
+                            duration: 300
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+
+
                     MouseArea {
 
                         anchors.fill: parent
@@ -144,6 +171,17 @@ ApplicationWindow {
                 text: qsTr("E&xit")
                 onTriggered: Qt.quit();
             }
+        }
+        Menu {
+             title: qsTr("Something")
+             MenuItem {
+                 text: qsTr("Use hint")
+                 onTriggered: {
+
+                     root.clicked = false;
+                     myModel.hint();
+                 }
+             }
         }
     }
     statusBar: StatusBar {
