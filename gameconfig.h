@@ -1,9 +1,12 @@
 #ifndef GAMECONFIG_H
 #define GAMECONFIG_H
+
 #include <QObject>
 #include <QVector>
 #include <QDebug>
-class GameConfig: public QObject {
+
+class GameConfig: public QObject
+{
     Q_OBJECT
     Q_PROPERTY(int columns READ columns WRITE setcolumns NOTIFY columnsChanged)
     Q_PROPERTY(int rows READ rows WRITE setRows NOTIFY rowsChanged)
@@ -13,7 +16,9 @@ class GameConfig: public QObject {
     Q_PROPERTY(int moves READ moves WRITE setMoves NOTIFY movesChanged)
     Q_PROPERTY(int score READ score WRITE setScore NOTIFY scoreChanged)
     Q_PROPERTY(bool isVictory READ isVictory WRITE setIsVictory NOTIFY isVictoryChanged)
+
 public:
+
     GameConfig();
     GameConfig(const GameConfig &);
     int columns() const;
@@ -28,7 +33,9 @@ public:
     void setTypes(const QVector<int> &types);
     GameConfig & operator =(const GameConfig &);
     bool isVictory() const;
+
 public slots:
+
     void setcolumns(int columns);
     void setRows(int rows);
     void setElementScore(int elementScore);
@@ -39,6 +46,7 @@ public slots:
     void setIsVictory(bool isVictory);
 
 signals:
+
     void columnsChanged(int columns);
     void rowsChanged(int rows);
     void elementScoreChanged(int elementScore);
@@ -49,6 +57,7 @@ signals:
     void isVictoryChanged(bool isVictory);
 
 private:
+
     int m_columns;
     int m_rows;
     int m_elementScore;

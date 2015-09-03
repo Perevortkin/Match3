@@ -3,29 +3,35 @@
 
 #include <QString>
 #include <QObject>
-#include <QPointer>
-class Item: public QObject {
+
+class Item: public QObject
+{
 
     Q_OBJECT
     Q_PROPERTY(bool flag READ getFlag WRITE setFlag NOTIFY flagChanged)
+
 public:
+
     Item();
     Item(const Item &);
-    void getRandomIcon();
-    void refresh();
-    int getName() const;
-    QString getIcon() const;
-    bool getFlag() const;
-    void setName(int name);
-    void setFlag(bool flag);
     Item& operator = (const Item &);
 
+    void getRandomIcon();
+    QString getIcon() const;
+    void refresh();
+
+    int getType() const;
+    void setType(int name);
+
+    bool getFlag() const;
+    void setFlag(bool flag);
+
 signals:
-    void  flagChanged();
+    void flagChanged();
 
 private:
     QString m_Icon;
-    int m_name;
+    int m_type;
     bool m_flag;
 };
 

@@ -6,17 +6,17 @@ Item::Item():QObject(0) {
 }
 
 Item::Item(const Item & item):QObject(0) {
-    m_name = item.getName();
+    m_type = item.getType();
     m_flag = item.getFlag();
     m_Icon = item.getIcon();
 }
 
-int Item::getName() const {
-    return m_name;
+int Item::getType() const {
+    return m_type;
 }
 
-void Item::setName(int name) {
-    m_name = name;
+void Item::setType(int name) {
+    m_type = name;
 }
 
 QString Item::getIcon() const {
@@ -33,7 +33,7 @@ void Item::setFlag(bool flag) {
 }
 
 Item &Item::operator =(const Item & item) {
-    m_name = item.getName();
+    m_type = item.getType();
     m_flag = item.getFlag();
     m_Icon = item.getIcon();
     return *this;
@@ -41,9 +41,9 @@ Item &Item::operator =(const Item & item) {
 
 void Item::getRandomIcon() {
     int n = rand()% 5 + 1;
-    m_name = n;
+    m_type = n;
     m_flag = false;
-    switch (m_name) {
+    switch (m_type) {
     case 1:
         m_Icon = "qrc:/icons/icons/apple.png";
         break;

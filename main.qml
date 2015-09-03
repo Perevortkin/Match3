@@ -15,7 +15,6 @@ ApplicationWindow {
     visible: true
 
     Rectangle {
-
         id:mainRect
 
         anchors.fill: parent
@@ -28,7 +27,6 @@ ApplicationWindow {
         }
 
         GridView {
-
             id: view
 
             anchors.fill: parent
@@ -44,27 +42,30 @@ ApplicationWindow {
             move: Transition {
 
                 ParallelAnimation {
+
                     NumberAnimation {
                         easing.type: Easing.OutCubic
                         properties: "y"
                         duration: 500
                         alwaysRunToEnd: true
                     }
-                    //                    NumberAnimation {
-                    //                        easing.type: Easing.OutCubic
-                    //                        properties: "x"
-                    //                        duration: 500
-                    //                        alwaysRunToEnd: true
-                    //                    }
+                    NumberAnimation {
+                        easing.type: Easing.OutCubic
+                        properties: "x"
+                        duration: 500
+                        alwaysRunToEnd: true
+                    }
                 }
             }
             moveDisplaced: Transition {
+
                 NumberAnimation {
                     easing.type: Easing.OutCubic; properties: "x, y"; duration: 500
                     alwaysRunToEnd: true
                 }
             }
             delegate: Component {
+
                 Item {
                     id: item
 
@@ -82,37 +83,16 @@ ApplicationWindow {
                         opacity: flag ? 0 : 1
 
                         Behavior on opacity { NumberAnimation {duration: 800} }
+
                         Text {
                             anchors.centerIn: parent
-                            text: index + " " + name
-                        }
-                    }
-
-                    SequentialAnimation {
-                        id: scaleAnim
-                        loops: Animation.Infinite
-                        alwaysRunToEnd: true
-                        //      running: root.clicked && (index === root.index)
-                        NumberAnimation {
-                            from: 1
-                            to: 1.3
-                            target: iconLoader
-                            property: "scale"
-                            duration: 300
-                            easing.type: Easing.InOutQuad
-                        }
-                        NumberAnimation {
-                            from: 1.3
-                            to: 1
-                            target: iconLoader
-                            property: "scale"
-                            duration: 300
-                            easing.type: Easing.InOutQuad
+                            //text: index + " " + name
                         }
                     }
 
                     SequentialAnimation {
                         id: scaleAnimForHint
+
                         loops: 4
                         alwaysRunToEnd: true
                         running: (index === myModel.elementToSwap1 || index === myModel.elementToSwap2) && !root.clicked
@@ -136,34 +116,62 @@ ApplicationWindow {
 
                     ParticleSystem {
                         id: particleSystem
+
                         running: index === root.index
                         visible: index === root.index
                         anchors.fill: parent
+
                         ImageParticle {
                             anchors.fill: parent
-                            color: "blue"
-                            blueVariation: 0.8
-                            source: "qrc:/icons/icons/lightning31.png"
-
-
+                            color: "red"
+                            redVariation: 0.6
+                            source: "qrc:/icons/icons/star1.png"
                         }
-
 
                         Emitter {
+                            id: particleEmitter
+
                             emitRate: 100
-                            lifeSpan: 1000
+                            lifeSpan: 500
                             size: 5
                             sizeVariation: 5
-                            // velocity: PointDirection{ x: 66; xVariation: 20 }
-                            width: view.cellWidth
-                            height: view.cellHeight
-                            shape: RectangleShape {
+                            width: parent.width
+                            height: parent.height
+
+                            shape: EllipseShape {
                                 fill:false
                             }
+                        }
+                    }
 
+                    ParticleSystem {
+                        id: particlesToRemove
+
+                        running: flag
+                        visible: flag
+                        anchors.fill: parent
+
+                        ImageParticle {
+                            anchors.fill: parent
+                            source: "qrc:/icons/icons/bee.png"
                         }
 
+                        Emitter {
+                            id: particlesToRemoveEmitter
+
+                            emitRate: 50
+                            lifeSpan: 2000
+                            size: 20
+                            sizeVariation: 5
+                            width: view.cellWidth
+                            height: view.cellHeight
+
+                            shape: RectangleShape {
+                                fill:true
+                            }
+                        }
                     }
+
                     MouseArea {
 
                         anchors.fill: parent
@@ -172,6 +180,7 @@ ApplicationWindow {
 
                             if (root.clicked && (index != root.index)) {
                                 root.clicked = false;
+
                                 if (myModel.config.moves < myModel.config.maxMoves) {
                                     root.index = myModel.swapTwoElements(root.index, index);
                                 }

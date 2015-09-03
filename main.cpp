@@ -2,7 +2,6 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include <QDebug>
 #include "modellist.h"
 #include "gameconfig.h"
 

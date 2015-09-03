@@ -5,11 +5,6 @@
         <file>qml.qrc</file>
     </qresource>
     <qresource prefix="/icons">
-        <file>icons/sunny62.png</file>
-        <file>icons/snowflake3.png</file>
-        <file>icons/rain14.png</file>
-        <file>icons/lightning31.png</file>
-        <file>icons/cloudy65.png</file>
         <file>icons/watermelon.png</file>
         <file>icons/strawberry.png</file>
         <file>icons/pear.png</file>
@@ -19,5 +14,8 @@
         <file>icons/pepper.png</file>
         <file>icons/carrot.png</file>
         <file>icons/background1.jpg</file>
+        <file>icons/star2.png</file>
+        <file>icons/star1.png</file>
+        <file>icons/bee.png</file>
     </qresource>
 </RCC>
