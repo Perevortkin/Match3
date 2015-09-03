@@ -133,7 +133,7 @@ ApplicationWindow {
 
                             emitRate: 100
                             lifeSpan: 500
-                            size: 5
+                            size: 8
                             sizeVariation: 5
                             width: parent.width
                             height: parent.height
@@ -159,7 +159,7 @@ ApplicationWindow {
                         Emitter {
                             id: particlesToRemoveEmitter
 
-                            emitRate: 50
+                            emitRate: 200
                             lifeSpan: 2000
                             size: 20
                             sizeVariation: 5
@@ -167,7 +167,7 @@ ApplicationWindow {
                             height: view.cellHeight
 
                             shape: RectangleShape {
-                                fill:true
+                                fill:false
                             }
                         }
                     }
@@ -212,10 +212,10 @@ ApplicationWindow {
         }
         Menu {
             title: qsTr("Something")
+
             MenuItem {
                 text: qsTr("Use hint")
                 onTriggered: {
-
                     root.clicked = false;
                     myModel.hint();
                 }
